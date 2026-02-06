@@ -7,11 +7,11 @@
 
 <style>
 body{
-  text-align:center;
+  margin:0;
   font-family:Arial;
   background:black;
   color:white;
-  margin:0;
+  text-align:center;
   overflow:hidden;
 }
 
@@ -27,10 +27,7 @@ body{
   z-index:5;
 }
 
-#mainContent{
-  display:none;
-  padding-top:60px;
-}
+#mainContent{ display:none; padding-top:60px; }
 
 button{
   padding:12px 25px;
@@ -51,9 +48,16 @@ img{
   margin:10px;
 }
 
-@keyframes float{
-  from {transform: translateY(0); opacity:1;}
-  to {transform: translateY(-100vh); opacity:0;}
+.popup{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#222;
+  padding:25px;
+  border-radius:15px;
+  display:none;
+  z-index:20;
 }
 
 #quizModal{
@@ -75,18 +79,9 @@ img{
   max-width:420px;
 }
 
-/* POPUPS */
-
-.popup{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:#222;
-  padding:25px;
-  border-radius:15px;
-  display:none;
-  z-index:20;
+@keyframes float{
+  from {transform:translateY(0); opacity:1;}
+  to {transform:translateY(-100vh); opacity:0;}
 }
 
 </style>
@@ -111,16 +106,16 @@ img{
   </div>
 </div>
 
-<!-- ROAST POPUP -->
+<!-- ROAST -->
 <div class="popup" id="roastPopup">
 <h2 id="roastText"></h2>
-<button onclick="closeRoast()">Continue</button>
+<button id="roastBtn">Continue</button>
 </div>
 
-<!-- RESULT POPUP -->
+<!-- RESULT -->
 <div class="popup" id="resultPopup">
 <h2 id="resultText"></h2>
-<button onclick="closeResult()">Next</button>
+<button id="resultBtn">Next</button>
 </div>
 
 <audio id="song" loop>
@@ -133,8 +128,12 @@ img{
 
 <script>
 
-/* INTRO */
-window.onload = ()=>{
+/* ---------- INTRO ---------- */
+
+const intro = document.getElementById("intro");
+const mainContent = document.getElementById("mainContent");
+
+window.onload = () => {
   document.getElementById("tudum").play().catch(()=>{});
   setTimeout(()=>{
     intro.style.display="none";
@@ -142,14 +141,31 @@ window.onload = ()=>{
   },3000);
 };
 
-let songStarted=false;
-let selectedAnswer="";
-let selectedCorrect="";
+/* ---------- VARIABLES ---------- */
 
-const noBtn=noBtn=document.getElementById("noBtn");
 const yesBtn=document.getElementById("yesBtn");
+const noBtn=document.getElementById("noBtn");
 const container=document.getElementById("photoContainer");
 const song=document.getElementById("song");
+
+const quizModal=document.getElementById("quizModal");
+const quizQuestion=document.getElementById("quizQuestion");
+const quizOptions=document.getElementById("quizOptions");
+
+const roastPopup=document.getElementById("roastPopup");
+const roastText=document.getElementById("roastText");
+const roastBtn=document.getElementById("roastBtn");
+
+const resultPopup=document.getElementById("resultPopup");
+const resultText=document.getElementById("resultText");
+const resultBtn=document.getElementById("resultBtn");
+
+let selectedAnswer="";
+let correctAnswer="";
+let currentQuiz=0;
+let songStarted=false;
+
+/* ---------- PHOTOS ---------- */
 
 const photos=[
 "photo1.jpg.jpeg",
@@ -159,7 +175,7 @@ const photos=[
 "photo5.jpg.jpeg"
 ];
 
-/* QUIZ DATA */
+/* ---------- QUIZ DATA ---------- */
 
 const quiz=[
 {
@@ -169,9 +185,9 @@ options:[
 "Me obviously 😌",
 "You obviously 🙄",
 "Both equally 😇",
-"Our parents 🤣",
 "Our phones 📱",
-"Our food love 🍕"
+"Our food love 🍕",
+"Our parents 🤣"
 ]
 },
 {
@@ -181,9 +197,9 @@ options:[
 "Because you love me 🥰",
 "Because I'm cute 😎",
 "Because life is boring without me",
-"Because you are stuck 😜",
+"Because destiny trapped you 😈",
 "Because I'm entertaining 🤡",
-"Because destiny trapped you 😈"
+"Because you're stuck 😜"
 ]
 },
 {
@@ -193,16 +209,15 @@ options:[
 "Yes ❤️",
 "Obviously Yes 😘",
 "I have no escape 🥲",
-"I already accepted my fate 😂",
-"Depends on food availability 🍔",
+"I accepted my fate 😂",
+"Depends on food 🍔",
 "Yes but you handle mood swings 🤣"
 ]
 }
 ];
 
-let currentQuiz=0;
+/* ---------- MUSIC ---------- */
 
-/* MUSIC */
 function startSong(){
   if(!songStarted){
     song.play().catch(()=>{});
@@ -210,25 +225,30 @@ function startSong(){
   }
 }
 
-/* NO BUTTON ESCAPE */
+/* ---------- NO BUTTON ESCAPE ---------- */
+
 function moveNoButton(){
   noBtn.style.left=Math.random()*80+"vw";
   noBtn.style.top=Math.random()*80+"vh";
 }
+
 noBtn.addEventListener("mouseover",moveNoButton);
 noBtn.addEventListener("touchstart",moveNoButton);
 
-/* YES CLICK */
+/* ---------- YES CLICK ---------- */
+
 yesBtn.onclick=()=>{
   startSong();
   quizModal.style.display="flex";
   loadQuiz();
 };
 
+/* ---------- LOAD QUIZ ---------- */
+
 function loadQuiz(){
+
   let q=quiz[currentQuiz];
   quizQuestion.innerText=q.question;
-
   quizOptions.innerHTML="";
 
   q.options.forEach(opt=>{
@@ -237,48 +257,46 @@ function loadQuiz(){
 
     btn.onclick=()=>{
       selectedAnswer=opt;
-      selectedCorrect=q.correct;
-      showRoast(opt,q.correct);
+      correctAnswer=q.correct;
+      showRoast();
     };
 
     quizOptions.appendChild(btn);
   });
 }
 
-/* ROAST MESSAGE */
+/* ---------- ROAST ---------- */
 
-function showRoast(selected,correct){
+function showRoast(){
 
-  let roast="";
-
-  if(selected===correct){
-    roast="Aww look at you giving correct answer 🥺❤️";
+  if(selectedAnswer===correctAnswer){
+    roastText.innerText="Aww correct answer 🥺❤️";
   }else{
-    roast="Shrutika… really? 🤨 Nakul is judging you right now 😂";
+    roastText.innerText="Shrutikaaa 😂 Nakul is disappointed";
   }
 
-  roastText.innerText=roast;
   roastPopup.style.display="block";
 }
 
-function closeRoast(){
+roastBtn.onclick=()=>{
   roastPopup.style.display="none";
   showResult();
-}
+};
 
-/* RESULT POPUP */
+/* ---------- RESULT ---------- */
 
 function showResult(){
-  if(selectedAnswer===selectedCorrect){
-    resultText.innerText="✅ Correct Answer ❤️";
+
+  if(selectedAnswer===correctAnswer){
+    resultText.innerText="✅ Correct Answer";
   }else{
-    resultText.innerText="❌ Wrong Answer 😜";
+    resultText.innerText="❌ Wrong Answer";
   }
 
   resultPopup.style.display="block";
 }
 
-function closeResult(){
+resultBtn.onclick=()=>{
   resultPopup.style.display="none";
 
   currentQuiz++;
@@ -289,9 +307,9 @@ function closeResult(){
     quizModal.style.display="none";
     showLoveAnimation();
   }
-}
+};
 
-/* FINAL LOVE */
+/* ---------- FINAL LOVE ---------- */
 
 function showLoveAnimation(){
 
@@ -300,7 +318,7 @@ function showLoveAnimation(){
 
   createHearts();
 
-  container.innerHTML="<h2>You just made Nakul the happiest ❤️</h2>";
+  container.innerHTML="<h2>You made Nakul happiest ❤️</h2>";
 
   setTimeout(()=>{
     photos.forEach(photo=>{
@@ -316,7 +334,7 @@ function showLoveAnimation(){
   },1000);
 }
 
-/* HEART FLOAT */
+/* ---------- HEART FLOAT ---------- */
 
 function createHearts(){
   setInterval(()=>{
