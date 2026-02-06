@@ -15,8 +15,6 @@ body{
   overflow:hidden;
 }
 
-/* NETFLIX INTRO */
-
 #intro{
   position:fixed;
   width:100%;
@@ -26,16 +24,8 @@ body{
   justify-content:center;
   align-items:center;
   font-size:50px;
-  letter-spacing:5px;
-  animation:fadeOut 3s forwards 2s;
   z-index:5;
 }
-
-@keyframes fadeOut{
-  to{opacity:0; visibility:hidden;}
-}
-
-/* MAIN */
 
 #mainContent{
   display:none;
@@ -45,53 +35,29 @@ body{
 button{
   padding:12px 25px;
   font-size:18px;
-  margin:10px;
+  margin:8px;
   border:none;
   border-radius:12px;
   cursor:pointer;
 }
 
-#yesBtn{
-  background:#4CAF50;
-  color:white;
-}
-
-#noBtn{
-  background:#f44336;
-  color:white;
-  position:fixed;
-}
+#yesBtn{ background:#4CAF50; color:white; }
+#noBtn{ background:#f44336; color:white; position:fixed; }
 
 img{
   width:80%;
   max-width:260px;
   border-radius:15px;
   margin:10px;
-  animation:zoomIn 1s ease;
 }
-
-#photoContainer{
-  margin-top:20px;
-}
-
-@keyframes zoomIn{
-  from{transform:scale(0.6); opacity:0;}
-  to{transform:scale(1); opacity:1;}
-}
-
-/* HEART FLOAT */
 
 @keyframes float{
   from {transform: translateY(0); opacity:1;}
   to {transform: translateY(-100vh); opacity:0;}
 }
 
-/* QUIZ MODAL */
-
 #quizModal{
   position:fixed;
-  top:0;
-  left:0;
   width:100%;
   height:100%;
   background:rgba(0,0,0,0.9);
@@ -106,13 +72,23 @@ img{
   padding:25px;
   border-radius:15px;
   width:90%;
-  max-width:400px;
-  animation:zoomIn 0.5s;
+  max-width:420px;
 }
 
-.quizBox button{
-  width:100%;
+/* POPUPS */
+
+.popup{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#222;
+  padding:25px;
+  border-radius:15px;
+  display:none;
+  z-index:20;
 }
+
 </style>
 </head>
 
@@ -122,10 +98,8 @@ img{
 
 <div id="mainContent">
 <h1>Will you be my Valentine? ❤️</h1>
-
 <button id="yesBtn">Yes</button>
 <button id="noBtn">No</button>
-
 <div id="photoContainer"></div>
 </div>
 
@@ -137,29 +111,47 @@ img{
   </div>
 </div>
 
+<!-- ROAST POPUP -->
+<div class="popup" id="roastPopup">
+<h2 id="roastText"></h2>
+<button onclick="closeRoast()">Continue</button>
+</div>
+
+<!-- RESULT POPUP -->
+<div class="popup" id="resultPopup">
+<h2 id="resultText"></h2>
+<button onclick="closeResult()">Next</button>
+</div>
+
 <audio id="song" loop>
-  <source src="Dil-tu-Jaan-tu.mp3" type="audio/mp3">
+<source src="Dil-tu-Jaan-tu.mp3">
+</audio>
+
+<audio id="tudum">
+<source src="tudum.mp3">
 </audio>
 
 <script>
 
 /* INTRO */
-setTimeout(()=>{
-  document.getElementById("mainContent").style.display="block";
-},4000);
+window.onload = ()=>{
+  document.getElementById("tudum").play().catch(()=>{});
+  setTimeout(()=>{
+    intro.style.display="none";
+    mainContent.style.display="block";
+  },3000);
+};
 
-/* VARIABLES */
+let songStarted=false;
+let selectedAnswer="";
+let selectedCorrect="";
 
-let songStarted = false;
+const noBtn=noBtn=document.getElementById("noBtn");
+const yesBtn=document.getElementById("yesBtn");
+const container=document.getElementById("photoContainer");
+const song=document.getElementById("song");
 
-const noBtn = document.getElementById("noBtn");
-const yesBtn = document.getElementById("yesBtn");
-const container = document.getElementById("photoContainer");
-const song = document.getElementById("song");
-
-/* ✅ UPDATED PHOTO LIST */
-
-const photos = [
+const photos=[
 "photo1.jpg.jpeg",
 "photo2.jpg.jpeg",
 "photo3.jpg.jpeg",
@@ -167,102 +159,158 @@ const photos = [
 "photo5.jpg.jpeg"
 ];
 
-/* QUIZ */
+/* QUIZ DATA */
 
-const quiz = [
+const quiz=[
 {
 question:"Who loves more in this relationship? ❤️",
-options:["Me obviously 😌","You obviously 🙄","Both but I show more 😎"]
+correct:"Me obviously 😌",
+options:[
+"Me obviously 😌",
+"You obviously 🙄",
+"Both equally 😇",
+"Our parents 🤣",
+"Our phones 📱",
+"Our food love 🍕"
+]
 },
 {
 question:"Why do you tolerate me? 😂",
-options:["Because you love me 🥰","Because I'm cute 😎","Because life is boring without me"]
+correct:"Because life is boring without me",
+options:[
+"Because you love me 🥰",
+"Because I'm cute 😎",
+"Because life is boring without me",
+"Because you are stuck 😜",
+"Because I'm entertaining 🤡",
+"Because destiny trapped you 😈"
+]
 },
 {
 question:"Will you stay stuck with me forever? 💕",
-options:["Yes ❤️","Obviously Yes 😘"]
+correct:"Obviously Yes 😘",
+options:[
+"Yes ❤️",
+"Obviously Yes 😘",
+"I have no escape 🥲",
+"I already accepted my fate 😂",
+"Depends on food availability 🍔",
+"Yes but you handle mood swings 🤣"
+]
 }
 ];
 
-let currentQuiz = 0;
+let currentQuiz=0;
 
 /* MUSIC */
-
 function startSong(){
   if(!songStarted){
     song.play().catch(()=>{});
-    songStarted = true;
+    songStarted=true;
   }
 }
 
 /* NO BUTTON ESCAPE */
-
 function moveNoButton(){
-  let x = Math.random() * (window.innerWidth - 100);
-  let y = Math.random() * (window.innerHeight - 50);
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+  noBtn.style.left=Math.random()*80+"vw";
+  noBtn.style.top=Math.random()*80+"vh";
 }
+noBtn.addEventListener("mouseover",moveNoButton);
+noBtn.addEventListener("touchstart",moveNoButton);
 
-noBtn.onclick = () => {
+/* YES CLICK */
+yesBtn.onclick=()=>{
   startSong();
-  moveNoButton();
-};
-
-/* YES CLICK → QUIZ */
-
-yesBtn.onclick = () => {
-  startSong();
-  document.getElementById("quizModal").style.display="flex";
+  quizModal.style.display="flex";
   loadQuiz();
 };
 
 function loadQuiz(){
-  let q = quiz[currentQuiz];
-  document.getElementById("quizQuestion").innerText = q.question;
+  let q=quiz[currentQuiz];
+  quizQuestion.innerText=q.question;
 
-  let optDiv = document.getElementById("quizOptions");
-  optDiv.innerHTML = "";
+  quizOptions.innerHTML="";
 
   q.options.forEach(opt=>{
-    let btn = document.createElement("button");
-    btn.innerText = opt;
-    btn.onclick = nextQuiz;
-    optDiv.appendChild(btn);
+    let btn=document.createElement("button");
+    btn.innerText=opt;
+
+    btn.onclick=()=>{
+      selectedAnswer=opt;
+      selectedCorrect=q.correct;
+      showRoast(opt,q.correct);
+    };
+
+    quizOptions.appendChild(btn);
   });
 }
 
-function nextQuiz(){
+/* ROAST MESSAGE */
+
+function showRoast(selected,correct){
+
+  let roast="";
+
+  if(selected===correct){
+    roast="Aww look at you giving correct answer 🥺❤️";
+  }else{
+    roast="Shrutika… really? 🤨 Nakul is judging you right now 😂";
+  }
+
+  roastText.innerText=roast;
+  roastPopup.style.display="block";
+}
+
+function closeRoast(){
+  roastPopup.style.display="none";
+  showResult();
+}
+
+/* RESULT POPUP */
+
+function showResult(){
+  if(selectedAnswer===selectedCorrect){
+    resultText.innerText="✅ Correct Answer ❤️";
+  }else{
+    resultText.innerText="❌ Wrong Answer 😜";
+  }
+
+  resultPopup.style.display="block";
+}
+
+function closeResult(){
+  resultPopup.style.display="none";
+
   currentQuiz++;
 
-  if(currentQuiz < quiz.length){
+  if(currentQuiz<quiz.length){
     loadQuiz();
-  } else {
-    document.getElementById("quizModal").style.display="none";
+  }else{
+    quizModal.style.display="none";
     showLoveAnimation();
   }
 }
 
-/* FINAL ANIMATION */
+/* FINAL LOVE */
 
 function showLoveAnimation(){
 
-  noBtn.style.display="none";
   yesBtn.style.display="none";
+  noBtn.style.display="none";
 
   createHearts();
 
-  container.innerHTML = "<h2>You just made Nakul the happiest ❤️</h2>";
+  container.innerHTML="<h2>You just made Nakul the happiest ❤️</h2>";
 
   setTimeout(()=>{
     photos.forEach(photo=>{
-      let img = document.createElement("img");
-      img.src = photo;
+      let img=document.createElement("img");
+      img.src=photo;
       container.appendChild(img);
     });
 
-    let msg = document.createElement("h2");
-    msg.innerHTML = "Nakul ❤️ Shrutika Forever ♾️";
+    let msg=document.createElement("h2");
+    msg.innerHTML="Nakul ❤️ Shrutika Forever ♾️";
     container.appendChild(msg);
 
   },1000);
@@ -272,13 +320,12 @@ function showLoveAnimation(){
 
 function createHearts(){
   setInterval(()=>{
-    let heart = document.createElement("div");
-    heart.innerHTML = "❤️";
-    heart.style.position = "fixed";
-    heart.style.left = Math.random()*100 + "vw";
-    heart.style.bottom = "0";
-    heart.style.fontSize = "20px";
-    heart.style.animation = "float 4s linear";
+    let heart=document.createElement("div");
+    heart.innerHTML="❤️";
+    heart.style.position="fixed";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.bottom="0";
+    heart.style.animation="float 4s linear";
 
     document.body.appendChild(heart);
     setTimeout(()=>heart.remove(),4000);
