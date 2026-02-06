@@ -1,179 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nakul ❤️ Shrutika</title>
+<meta charset="UTF-8">
+<title>For You ❤️</title>
 
 <style>
 body{
-    text-align:center;
-    font-family:Arial;
-    background:#ffe6f0;
-    overflow-x:hidden;
+  text-align:center;
+  font-family:Arial;
+  background:linear-gradient(to right,#ff9a9e,#fad0c4);
+  overflow:hidden;
+}
+
+h1{
+  margin-top:60px;
 }
 
 button{
-    padding:15px 25px;
-    font-size:18px;
-    margin:10px;
-    border:none;
-    border-radius:10px;
+  padding:12px 25px;
+  font-size:18px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 
 #yesBtn{
-    background:#ff4d6d;
-    color:white;
+  background:#4CAF50;
+  color:white;
 }
 
 #noBtn{
-    background:#444;
-    color:white;
-    position:relative;
+  background:#f44336;
+  color:white;
+  position:absolute;
 }
 
-#loveText{
-    display:none;
-    font-size:28px;
-    margin-top:20px;
-    color:red;
+img{
+  width:220px;
+  border-radius:15px;
+  margin:10px;
 }
 
-#funnyMsg{
-    display:none;
-    font-size:20px;
-    margin-top:10px;
-    color:#ff2e63;
-    font-weight:bold;
-}
-
-.photo{
-    display:none;
-    width:90%;
-    max-width:300px;
-    margin:10px auto;
-    border-radius:15px;
+#photoContainer{
+  margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Shrutika ❤️</h2>
-<p>Nakul has one question 😌</p>
+<h1>Do you love me? ❤️</h1>
 
-<h2>Will you be my Valentine? 💘</h2>
+<button id="yesBtn">Yes</button>
+<button id="noBtn">No</button>
 
-<button id="yesBtn" onclick="yesClicked()">Yes</button>
-<button id="noBtn" onclick="noClicked()">No</button>
+<div id="photoContainer"></div>
 
-<div id="loveText">OMG She Said YES ❤️</div>
-
-<!-- 😂 Funny Message -->
-<div id="funnyMsg">Are you sure? Think again 😏</div>
-
-<!-- 📸 Photos -->
-<img class="photo" id="p1" src="photo1.jpg.jpeg">
-<img class="photo" id="p2" src="photo2.jpg.jpeg">
-<img class="photo" id="p3" src="photo3.jpg.jpeg">
-<img class="photo" id="p4" src="photo4.jpg.jpeg">
-<img class="photo" id="p5" src="photo5.jpg.jpeg">
-
-<!-- 🎵 Song -->
-<audio id="song" loop>
-    <source src="Dil-tu-Jaan-tu.mp3.mp3" type="audio/mpeg">
+<audio id="song" autoplay loop>
+  <source src="Dil-tu-Jaan-tu.mp3.mp3" type="audio/mp3">
 </audio>
 
 <script>
 
-let noClickCount = 0;
+let noCount = 0;
+let noBtn = document.getElementById("noBtn");
+let yesBtn = document.getElementById("yesBtn");
+let container = document.getElementById("photoContainer");
 
-function noClicked(){
+const photos = [
+"photo1.jpg","photo2.jpg","photo3.jpg","photo4.jpg","photo5.jpg",
+"photo1.jpeg","photo2.jpeg","photo3.jpeg","photo4.jpeg","photo5.jpeg"
+];
 
-    let btn=document.getElementById("noBtn");
+function moveNoButton(){
 
-    btn.innerText="😂";
-    setTimeout(()=>{ btn.innerText="No"; },1000);
+  let yesRect = yesBtn.getBoundingClientRect();
 
-    noClickCount++;
+  let offsetX = Math.random()*120 - 60;
+  let offsetY = Math.random()*120 - 60;
 
-    if(noClickCount === 1){
-        document.getElementById("p1").style.display="block";
-    }
-
-    if(noClickCount === 2){
-        document.getElementById("p2").style.display="block";
-
-        // 😂 Show funny message
-        document.getElementById("funnyMsg").style.display="block";
-    }
-
-    if(noClickCount === 3){
-        document.getElementById("p3").style.display="block";
-    }
-
-    if(noClickCount === 4){
-        document.getElementById("p4").style.display="block";
-    }
-
-    if(noClickCount === 5){
-        document.getElementById("p5").style.display="block";
-    }
-
-    // Move No button near Yes
-    let yesBtn=document.getElementById("yesBtn");
-    let rect=yesBtn.getBoundingClientRect();
-
-    let randomX = rect.left + Math.random()*80 - 40;
-    let randomY = rect.top + Math.random()*80 - 40;
-
-    btn.style.position="absolute";
-    btn.style.left=randomX+"px";
-    btn.style.top=randomY+"px";
+  noBtn.style.left = (yesRect.left + offsetX) + "px";
+  noBtn.style.top = (yesRect.top + offsetY) + "px";
 }
 
+noBtn.onclick = () => {
 
-function yesClicked(){
+  noCount++;
 
-    document.getElementById("loveText").style.display="block";
+  noBtn.innerText = "😂";
 
-    // 🎵 Play Song
-    document.getElementById("song").play().catch(()=>{});
+  setTimeout(()=>{
+    noBtn.innerText = "No";
+  },1000);
 
-    // 💖 Hearts
-    createHearts();
+  moveNoButton();
 
-    // 📸 Show all photos
-    document.querySelectorAll(".photo").forEach(img=>{
-        img.style.display="block";
-    });
+  if(noCount <= 5){
 
-    // Hide funny message if visible
-    document.getElementById("funnyMsg").style.display="none";
-}
+    container.innerHTML = "";
 
+    let img = document.createElement("img");
+    img.src = photos[noCount-1];
 
-// 💖 Heart Animation
-function createHearts(){
-    setInterval(()=>{
-        let heart=document.createElement("div");
-        heart.innerHTML="❤️";
-        heart.style.position="absolute";
-        heart.style.left=Math.random()*100+"vw";
-        heart.style.top="100vh";
-        heart.style.fontSize="24px";
+    container.appendChild(img);
+  }
 
-        document.body.appendChild(heart);
+};
 
-        let move=setInterval(()=>{
-            heart.style.top=(heart.offsetTop-3)+"px";
-            if(heart.offsetTop<0){
-                heart.remove();
-                clearInterval(move);
-            }
-        },20);
+yesBtn.onclick = () => {
 
-    },300);
-}
+  // ❌ Hide NO button
+  noBtn.style.display = "none";
+
+  container.innerHTML = "<h2>You are my everything ❤️</h2>";
+
+  for(let i=0;i<5;i++){
+    let img = document.createElement("img");
+    img.src = photos[i];
+    container.appendChild(img);
+  }
+
+  document.body.style.background =
+  "linear-gradient(to right,#ff758c,#ff7eb3)";
+};
 
 </script>
 
