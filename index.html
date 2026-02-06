@@ -6,239 +6,160 @@
 <title>Nakul ❤️ Shrutika</title>
 
 <style>
-
-/* ---------- GENERAL ---------- */
-
 body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:black;
-color:white;
-overflow:hidden;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-text-align:center;
+  text-align:center;
+  font-family:Arial;
+  background:black;
+  color:white;
+  margin:0;
+  overflow:hidden;
 }
 
-.hidden{ display:none; }
-
-.section{
-position:absolute;
-width:100%;
-height:100%;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-transition:opacity 0.7s ease;
-}
-
-/* ---------- NETFLIX INTRO ---------- */
+/* NETFLIX INTRO */
 
 #intro{
-font-size:60px;
-font-weight:bold;
-color:#e50914;
-letter-spacing:6px;
-animation: netflixIntro 3s forwards;
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:black;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:50px;
+  letter-spacing:5px;
+  animation:fadeOut 3s forwards 2s;
+  z-index:5;
 }
 
-@keyframes netflixIntro{
-0%{opacity:0; transform:scale(0.4);}
-50%{opacity:1; transform:scale(1.1); text-shadow:0 0 40px red;}
-100%{opacity:0; transform:scale(1);}
+@keyframes fadeOut{
+  to{opacity:0; visibility:hidden;}
 }
 
-/* ---------- QUIZ ---------- */
+/* MAIN */
 
-.quizCard{
-background:rgba(255,255,255,0.08);
-padding:30px;
-border-radius:20px;
-backdrop-filter:blur(10px);
-animation: slideUp 0.7s ease;
-max-width:350px;
-}
-
-.quizCard button{
-margin:8px;
-padding:12px 25px;
-border:none;
-border-radius:10px;
-background:#ff4d6d;
-color:white;
-font-size:17px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.quizCard button:hover{
-transform:scale(1.1);
-}
-
-@keyframes slideUp{
-from{transform:translateY(60px); opacity:0;}
-to{transform:translateY(0); opacity:1;}
-}
-
-/* ---------- PROPOSAL ---------- */
-
-#proposal{
-background:linear-gradient(to right,#ff9a9e,#fad0c4);
-color:black;
+#mainContent{
+  display:none;
+  padding-top:60px;
 }
 
 button{
-padding:14px 30px;
-font-size:20px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-margin:10px;
-transition:0.3s;
+  padding:12px 25px;
+  font-size:18px;
+  margin:10px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
 }
 
 #yesBtn{
-background:#4CAF50;
-color:white;
+  background:#4CAF50;
+  color:white;
 }
 
 #noBtn{
-background:#f44336;
-color:white;
-position:absolute;
+  background:#f44336;
+  color:white;
+  position:fixed;
 }
 
-/* ---------- PHOTO GALLERY ---------- */
+img{
+  width:80%;
+  max-width:260px;
+  border-radius:15px;
+  margin:10px;
+  animation:zoomIn 1s ease;
+}
 
 #photoContainer{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-margin-top:20px;
+  margin-top:20px;
 }
 
-#photoContainer img{
-width:180px;
-border-radius:15px;
-margin:10px;
-animation: photoPop 0.8s ease;
+@keyframes zoomIn{
+  from{transform:scale(0.6); opacity:0;}
+  to{transform:scale(1); opacity:1;}
 }
 
-@keyframes photoPop{
-from{transform:scale(0.5); opacity:0;}
-to{transform:scale(1); opacity:1;}
-}
-
-/* ---------- FLOAT PARTICLES ---------- */
+/* HEART FLOAT */
 
 @keyframes float{
-from{transform:translateY(0); opacity:1;}
-to{transform:translateY(-100vh); opacity:0;}
+  from {transform: translateY(0); opacity:1;}
+  to {transform: translateY(-100vh); opacity:0;}
 }
 
+/* QUIZ MODAL */
+
+#quizModal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+
+.quizBox{
+  background:#111;
+  padding:25px;
+  border-radius:15px;
+  width:90%;
+  max-width:400px;
+  animation:zoomIn 0.5s;
+}
+
+.quizBox button{
+  width:100%;
+}
 </style>
 </head>
 
 <body>
 
-<!-- INTRO -->
-<div id="intro">NAKUL ❤️ SHRUTIKA</div>
+<div id="intro">N ❤️ S</div>
 
-<!-- QUIZ -->
-<div id="quizSection" class="section hidden">
-<div class="quizCard">
-<h2 id="quizQuestion"></h2>
-<div id="quizOptions"></div>
-</div>
-</div>
-
-<!-- PROPOSAL -->
-<div id="proposal" class="section hidden">
+<div id="mainContent">
 <h1>Will you be my Valentine? ❤️</h1>
+
 <button id="yesBtn">Yes</button>
 <button id="noBtn">No</button>
+
 <div id="photoContainer"></div>
 </div>
 
+<!-- QUIZ -->
+<div id="quizModal">
+  <div class="quizBox">
+    <h2 id="quizQuestion"></h2>
+    <div id="quizOptions"></div>
+  </div>
+</div>
+
 <audio id="song" loop>
-<source src="Dil-tu-Jaan-tu.mp3.mp3">
+  <source src="Dil-tu-Jaan-tu.mp3" type="audio/mp3">
 </audio>
 
 <script>
 
-/* ---------- INTRO ---------- */
-
+/* INTRO */
 setTimeout(()=>{
-intro.style.display="none";
-quizSection.classList.remove("hidden");
-loadQuiz();
-},3000);
+  document.getElementById("mainContent").style.display="block";
+},4000);
 
+/* VARIABLES */
 
-/* ---------- QUIZ DATA ---------- */
+let songStarted = false;
 
-const questions = [
-{
-q:"How special is Nakul to you?",
-a:["Very Special ❤️","He is nice 😊"]
-},
-{
-q:"Do you enjoy talking with Nakul?",
-a:["Always 😍","Sometimes 🙂"]
-},
-{
-q:"Do you smile when you see Nakul message?",
-a:["Yes obviously ❤️","Maybe 😌"]
-}
-];
-
-let qIndex = 0;
-
-function loadQuiz(){
-
-let q = questions[qIndex];
-
-quizQuestion.innerText = q.q;
-quizOptions.innerHTML="";
-
-q.a.forEach(ans=>{
-let btn = document.createElement("button");
-btn.innerText = ans;
-btn.onclick = nextQuestion;
-quizOptions.appendChild(btn);
-});
-
-}
-
-function nextQuestion(){
-
-qIndex++;
-
-if(qIndex < questions.length){
-loadQuiz();
-}
-else{
-quizSection.classList.add("hidden");
-proposal.classList.remove("hidden");
-}
-
-}
-
-
-/* ---------- PROPOSAL ---------- */
-
-const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
 const container = document.getElementById("photoContainer");
 const song = document.getElementById("song");
 
-let yesSize=1;
-let noSize=1;
+/* ✅ UPDATED PHOTO LIST */
 
-const photos=[
+const photos = [
 "photo1.jpg.jpeg",
 "photo2.jpg.jpeg",
 "photo3.jpg.jpeg",
@@ -246,87 +167,125 @@ const photos=[
 "photo5.jpg.jpeg"
 ];
 
-function moveNo(){
+/* QUIZ */
 
-let x=Math.random()*window.innerWidth;
-let y=Math.random()*window.innerHeight;
+const quiz = [
+{
+question:"Who loves more in this relationship? ❤️",
+options:["Me obviously 😌","You obviously 🙄","Both but I show more 😎"]
+},
+{
+question:"Why do you tolerate me? 😂",
+options:["Because you love me 🥰","Because I'm cute 😎","Because life is boring without me"]
+},
+{
+question:"Will you stay stuck with me forever? 💕",
+options:["Yes ❤️","Obviously Yes 😘"]
+}
+];
 
-noBtn.style.left=x+"px";
-noBtn.style.top=y+"px";
+let currentQuiz = 0;
+
+/* MUSIC */
+
+function startSong(){
+  if(!songStarted){
+    song.play().catch(()=>{});
+    songStarted = true;
+  }
 }
 
-noBtn.addEventListener("mouseover",moveNo);
-noBtn.addEventListener("touchstart",moveNo);
+/* NO BUTTON ESCAPE */
 
-noBtn.onclick=()=>{
-
-song.play().catch(()=>{});
-
-yesSize+=0.2;
-yesBtn.style.transform=`scale(${yesSize})`;
-
-noSize-=0.1;
-noBtn.style.transform=`scale(${noSize})`;
-
-moveNo();
-
-};
-
-
-/* ---------- YES CLICK ---------- */
-
-yesBtn.onclick=()=>{
-
-song.play().catch(()=>{});
-noBtn.style.display="none";
-
-/* heart burst */
-
-for(let i=0;i<70;i++){
-let h=document.createElement("div");
-h.innerHTML="💖";
-h.style.position="fixed";
-h.style.left=Math.random()*100+"vw";
-h.style.top=Math.random()*100+"vh";
-h.style.fontSize="24px";
-h.style.animation="float 3s linear";
-document.body.appendChild(h);
-setTimeout(()=>h.remove(),3000);
+function moveNoButton(){
+  let x = Math.random() * (window.innerWidth - 100);
+  let y = Math.random() * (window.innerHeight - 50);
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
 }
 
-/* staggered photo reveal */
-
-container.innerHTML="";
-
-photos.forEach((p,i)=>{
-setTimeout(()=>{
-let img=document.createElement("img");
-img.src=p;
-container.appendChild(img);
-},i*400);
-});
-
+noBtn.onclick = () => {
+  startSong();
+  moveNoButton();
 };
 
+/* YES CLICK → QUIZ */
 
-/* ---------- BACKGROUND SPARKLES ---------- */
+yesBtn.onclick = () => {
+  startSong();
+  document.getElementById("quizModal").style.display="flex";
+  loadQuiz();
+};
 
-setInterval(()=>{
+function loadQuiz(){
+  let q = quiz[currentQuiz];
+  document.getElementById("quizQuestion").innerText = q.question;
 
-let s=document.createElement("div");
-s.innerHTML="✨";
-s.style.position="fixed";
-s.style.left=Math.random()*100+"vw";
-s.style.bottom="0";
-s.style.fontSize="18px";
-s.style.animation="float 4s linear";
+  let optDiv = document.getElementById("quizOptions");
+  optDiv.innerHTML = "";
 
-document.body.appendChild(s);
-setTimeout(()=>s.remove(),4000);
+  q.options.forEach(opt=>{
+    let btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.onclick = nextQuiz;
+    optDiv.appendChild(btn);
+  });
+}
 
-},500);
+function nextQuiz(){
+  currentQuiz++;
+
+  if(currentQuiz < quiz.length){
+    loadQuiz();
+  } else {
+    document.getElementById("quizModal").style.display="none";
+    showLoveAnimation();
+  }
+}
+
+/* FINAL ANIMATION */
+
+function showLoveAnimation(){
+
+  noBtn.style.display="none";
+  yesBtn.style.display="none";
+
+  createHearts();
+
+  container.innerHTML = "<h2>You just made Nakul the happiest ❤️</h2>";
+
+  setTimeout(()=>{
+    photos.forEach(photo=>{
+      let img = document.createElement("img");
+      img.src = photo;
+      container.appendChild(img);
+    });
+
+    let msg = document.createElement("h2");
+    msg.innerHTML = "Nakul ❤️ Shrutika Forever ♾️";
+    container.appendChild(msg);
+
+  },1000);
+}
+
+/* HEART FLOAT */
+
+function createHearts(){
+  setInterval(()=>{
+    let heart = document.createElement("div");
+    heart.innerHTML = "❤️";
+    heart.style.position = "fixed";
+    heart.style.left = Math.random()*100 + "vw";
+    heart.style.bottom = "0";
+    heart.style.fontSize = "20px";
+    heart.style.animation = "float 4s linear";
+
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),4000);
+
+  },300);
+}
 
 </script>
-
 </body>
 </html>
