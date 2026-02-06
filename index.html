@@ -1,192 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nakul ❤️ Shrutika</title>
+<title>Question</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #ff5f6d, #ffc371);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
+body{
+    text-align:center;
+    font-family:Arial;
+    background:#ffe6f0;
+    overflow:hidden;
 }
 
-.container {
-    background: white;
-    width: 90%;
-    max-width: 380px;
-    padding: 20px;
-    border-radius: 25px;
-    text-align: center;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+button{
+    padding:15px 25px;
+    font-size:18px;
+    margin:10px;
+    border:none;
+    border-radius:10px;
 }
 
-h1 { color: #ff2e63; }
-
-.slider img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 15px;
-    transition: transform 0.5s;
+#yesBtn{
+    background:#ff4d6d;
+    color:white;
 }
 
-.buttons {
-    position: relative;
-    height: 70px;
-    margin-top: 20px;
+#noBtn{
+    background:#444;
+    color:white;
+    position:relative;
 }
 
-button {
-    padding: 12px 26px;
-    font-size: 16px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    position: absolute;
-    transition: all 0.3s ease;
-}
-
-#yesBtn {
-    background: #ff2e63;
-    color: white;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: wiggle 1.2s infinite;
-}
-
-@keyframes wiggle {
-    0% { transform: translateX(-50%) rotate(-5deg); }
-    25% { transform: translateX(-50%) rotate(5deg); }
-    50% { transform: translateX(-50%) rotate(-5deg); }
-    75% { transform: translateX(-50%) rotate(5deg); }
-    100% { transform: translateX(-50%) rotate(-5deg); }
-}
-
-#noBtn {
-    background: #ddd;
-    left: 60%;
-    top: 50px;
-}
-
-.love {
-    display: none;
-    font-size: 18px;
-    margin-top: 15px;
-    color: #ff2e63;
-}
-
-.heart {
-    position: fixed;
-    bottom: -10px;
-    font-size: 20px;
-    animation: float 4s linear forwards;
-}
-
-@keyframes float {
-    to {transform: translateY(-100vh); opacity: 0;}
+#loveText{
+    display:none;
+    font-size:28px;
+    margin-top:20px;
+    color:red;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>Shrutika 💖</h1>
-    <p>Nakul has only ONE question 😌</p>
+<h2>Do you love me? ❤️</h2>
 
-    <div class="slider">
-        <img id="slideImg" src="photo1.jpg">
-    </div>
+<button id="yesBtn" onclick="yesClicked()">Yes</button>
+<button id="noBtn" onclick="noClicked()">No</button>
 
-    <h1>Will you be my Valentine? 💘</h1>
+<div id="loveText">I Love You ❤️</div>
 
-    <div class="buttons">
-        <button id="yesBtn" onclick="yesClicked()">Yes 🥰</button>
-        <button id="noBtn">No 🙄</button>
-    </div>
-
-    <div class="love" id="loveText">
-        OMG She Said YES ❤️<br>
-        Nakul & Shrutika Forever 💑✨
-    </div>
-</div>
-
-<!-- Audio of Dil Tu Jaan Tu -->
-<audio id="song" src="DilTuJaanTu.mp3"></audio>
+<!-- 🎵 Song -->
+<audio id="song" loop>
+    <source src="Dil-tu-Jaan-tu.mp3.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-// Simple image slider
-let images = ["photo1.jpg.jpeg","photo2.jpg.jpeg","photo3.jpg.jpeg"];
-let index = 0;
-setInterval(() => {
-    index = (index + 1) % images.length;
-    document.getElementById("slideImg").src = images[index];
-}, 3000);
 
-// Smooth No button move around itself + laughing emoji
-const noBtn = document.getElementById("noBtn");
+// ✅ Play song on first screen touch
+document.body.addEventListener("click", function(){
+    let song=document.getElementById("song");
+    song.play().catch(()=>{});
+}, { once:true });
 
-function moveNo(event) {
-    const rect = noBtn.getBoundingClientRect();
-    const mouseX = event.clientX || event.touches[0].clientX;
-    const mouseY = event.clientY || event.touches[0].clientY;
 
-    const distX = mouseX - (rect.left + rect.width / 2);
-    const distY = mouseY - (rect.top + rect.height / 2);
-    const distance = Math.sqrt(distX*distX + distY*distY);
-
-    if(distance < 80){ // start moving when close
-        // Slight random offset (max ±20px)
-        const offsetX = (Math.random() - 0.5) * 40;
-        const offsetY = (Math.random() - 0.5) * 40;
-
-        noBtn.style.left = rect.left + offsetX + "px";
-        noBtn.style.top = rect.top + offsetY + "px";
-
-        // Laughing emoji for 1 second
-        noBtn.innerText = "😂";
-        noBtn.style.background = `hsl(${Math.random()*360}, 70%, 80%)`;
-
-        setTimeout(() => {
-            noBtn.innerText = "No 🙄";
-            noBtn.style.background = "#ddd";
-        }, 1000);
-    }
-}
-
-// Listeners for mouse & touch
-document.addEventListener("mousemove", moveNo);
-document.addEventListener("touchmove", moveNo);
-
-// Yes button click
-function yesClicked() {
-    document.getElementById("loveText").style.display = "block";
-
-    // Play only audio
-    const song = document.getElementById("song");
-    song.play();
-
+function yesClicked(){
+    document.getElementById("loveText").style.display="block";
     createHearts();
 }
 
-// Simple hearts animation
-function createHearts() {
-    setInterval(()=>{
-        const heart=document.createElement("div");
-        heart.className="heart";
-        heart.innerHTML="❤️";
-        heart.style.left=Math.random()*100+"vw";
-        document.body.appendChild(heart);
-        setTimeout(()=>heart.remove(),4000);
-    },400);
+function noClicked(){
+    let btn=document.getElementById("noBtn");
+
+    btn.innerText="😂";
+
+    setTimeout(()=>{
+        btn.innerText="No";
+    },1000);
+
+    let yesBtn=document.getElementById("yesBtn");
+    let rect=yesBtn.getBoundingClientRect();
+
+    let randomX = rect.left + Math.random()*80 - 40;
+    let randomY = rect.top + Math.random()*80 - 40;
+
+    btn.style.position="absolute";
+    btn.style.left=randomX+"px";
+    btn.style.top=randomY+"px";
 }
+
+function createHearts(){
+    setInterval(()=>{
+        let heart=document.createElement("div");
+        heart.innerHTML="❤️";
+        heart.style.position="absolute";
+        heart.style.left=Math.random()*100+"vw";
+        heart.style.top="100vh";
+        heart.style.fontSize="24px";
+
+        document.body.appendChild(heart);
+
+        let move=setInterval(()=>{
+            heart.style.top=(heart.offsetTop-3)+"px";
+            if(heart.offsetTop<0){
+                heart.remove();
+                clearInterval(move);
+            }
+        },20);
+
+    },300);
+}
+
 </script>
 
 </body>
