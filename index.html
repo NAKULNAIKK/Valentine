@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Question</title>
+<title>Nakul ❤️ Shrutika</title>
 
 <style>
 body{
@@ -10,6 +10,15 @@ body{
     font-family:Arial;
     background:#ffe6f0;
     overflow:hidden;
+}
+
+.slider img{
+    width:90%;
+    max-width:320px;
+    height:220px;
+    object-fit:cover;
+    border-radius:15px;
+    margin-top:20px;
 }
 
 button{
@@ -42,12 +51,20 @@ button{
 
 <body>
 
-<h2>Do you love me? ❤️</h2>
+<h2>Shrutika ❤️</h2>
+<p>Nakul has one question 😌</p>
+
+<!-- 📸 Photo Slider -->
+<div class="slider">
+    <img id="slideImg" src="photo1.jpg">
+</div>
+
+<h2>Will you be my Valentine? 💘</h2>
 
 <button id="yesBtn" onclick="yesClicked()">Yes</button>
 <button id="noBtn" onclick="noClicked()">No</button>
 
-<div id="loveText">I Love You ❤️</div>
+<div id="loveText">OMG She Said YES ❤️</div>
 
 <!-- 🎵 Song -->
 <audio id="song" loop>
@@ -56,11 +73,27 @@ button{
 
 <script>
 
-// ✅ Play song on first screen touch
-document.body.addEventListener("click", function(){
-    let song=document.getElementById("song");
-    song.play().catch(()=>{});
-}, { once:true });
+// 📸 Photo slider (5 photos)
+let images=[
+"photo1.jpg",
+"photo2.jpg",
+"photo3.jpg",
+"photo4.jpg",
+"photo5.jpg"
+];
+
+let index=0;
+
+setInterval(()=>{
+    index=(index+1)%images.length;
+    document.getElementById("slideImg").src=images[index];
+},2500);
+
+
+// 🎵 Song play on first tap
+document.body.addEventListener("click",()=>{
+    document.getElementById("song").play().catch(()=>{});
+},{once:true});
 
 
 function yesClicked(){
