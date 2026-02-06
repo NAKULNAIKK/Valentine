@@ -21,8 +21,9 @@ body{
 
 h1{
   margin-bottom:20px;
-  text-align:center;
 }
+
+/* Buttons */
 
 .buttonContainer{
   position:relative;
@@ -52,56 +53,50 @@ button{
   left:60%;
 }
 
-img{
-  width:220px;
-  border-radius:15px;
-  margin-top:15px;
-  animation: fadeIn 1s;
-}
+/* Photo gallery */
 
 #photoContainer{
-  text-align:center;
-  margin-top:15px;
+  display:flex;
+  gap:15px;
+  margin-top:20px;
+  overflow-x:auto;
+  padding:10px;
 }
 
-.popup{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:white;
-  padding:25px;
+img{
+  width:200px;
+  border-radius:15px;
+  animation: slideIn 1s;
+}
+
+/* Modern love card */
+
+.loveCard{
+  margin-top:20px;
+  padding:20px;
+  backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.3);
   border-radius:20px;
-  box-shadow:0 0 20px rgba(0,0,0,0.3);
-  z-index:999;
+  color:white;
+  max-width:300px;
+  animation: zoomFade 1s ease;
+}
+
+/* Animations */
+
+@keyframes slideIn{
+  from{transform:translateX(100px); opacity:0;}
+  to{transform:translateX(0); opacity:1;}
+}
+
+@keyframes zoomFade{
+  from{transform:scale(0.6); opacity:0;}
+  to{transform:scale(1); opacity:1;}
 }
 
 @keyframes float{
   from {transform: translateY(0); opacity:1;}
   to {transform: translateY(-100vh); opacity:0;}
-}
-
-@keyframes fadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-/* Mobile fix */
-@media(max-width:600px){
-
-  .buttonContainer{
-    width:220px;
-  }
-
-  button{
-    font-size:16px;
-    padding:10px 18px;
-  }
-
-  img{
-    width:180px;
-  }
-
 }
 
 </style>
@@ -112,14 +107,14 @@ img{
 <h1>Will you be my Valentine? ❤️</h1>
 
 <div class="buttonContainer">
-  <button id="yesBtn">Yes</button>
-  <button id="noBtn">No</button>
+<button id="yesBtn">Yes</button>
+<button id="noBtn">No</button>
 </div>
 
 <div id="photoContainer"></div>
 
 <audio id="song" loop>
-  <source src="Dil-tu-Jaan-tu.mp3.mp3" type="audio/mp3">
+<source src="Dil-tu-Jaan-tu.mp3.mp3" type="audio/mp3">
 </audio>
 
 <script>
@@ -143,129 +138,111 @@ const photos = [
 ];
 
 function startSong(){
-  if(!songStarted){
-    song.play().catch(()=>{});
-    songStarted = true;
-  }
+if(!songStarted){
+song.play().catch(()=>{});
+songStarted = true;
+}
 }
 
 function moveNoButton(){
 
-  let containerRect = document.querySelector(".buttonContainer").getBoundingClientRect();
+let x = Math.random() * 220;
+let y = Math.random() * 60;
 
-  let x = Math.random() * (containerRect.width - 80);
-  let y = Math.random() * (containerRect.height - 40);
-
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+noBtn.style.left = x + "px";
+noBtn.style.top = y + "px";
 }
 
-
-/* Floating Hearts Background */
+/* Floating sparkles */
 setInterval(()=>{
 
-  let heart = document.createElement("div");
-  heart.innerHTML = "❤️";
-  heart.style.position = "fixed";
-  heart.style.left = Math.random()*100 + "vw";
-  heart.style.bottom = "0";
-  heart.style.fontSize = "22px";
-  heart.style.animation = "float 4s linear";
+let heart = document.createElement("div");
+heart.innerHTML = "✨";
+heart.style.position = "fixed";
+heart.style.left = Math.random()*100 + "vw";
+heart.style.bottom = "0";
+heart.style.fontSize = "18px";
+heart.style.animation = "float 4s linear";
 
-  document.body.appendChild(heart);
-  setTimeout(()=>heart.remove(),4000);
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),4000);
 
 },400);
 
 
-/* NO button behaviour */
+/* NO behaviour */
+
 noBtn.addEventListener("mouseover", moveNoButton);
 noBtn.addEventListener("touchstart", moveNoButton);
 
 noBtn.onclick = () => {
 
-  startSong();
-  noCount++;
+startSong();
+noCount++;
 
-  yesSize += 0.2;
-  yesBtn.style.transform = `scale(${yesSize})`;
+yesSize += 0.2;
+yesBtn.style.transform = `scale(${yesSize})`;
 
-  noSize -= 0.1;
-  noBtn.style.transform = `scale(${noSize})`;
+noSize -= 0.1;
+noBtn.style.transform = `scale(${noSize})`;
 
-  moveNoButton();
+moveNoButton();
 
-  if(noCount <= photos.length){
-    container.innerHTML = "";
-    let img = document.createElement("img");
-    img.src = photos[noCount-1];
-    container.appendChild(img);
-  }
+if(noCount <= photos.length){
+container.innerHTML = "";
+let img = document.createElement("img");
+img.src = photos[noCount-1];
+container.appendChild(img);
+}
+
 };
 
 
-/* YES click */
+/* YES CLICK */
+
 yesBtn.onclick = () => {
 
-  startSong();
-  noBtn.style.display = "none";
+startSong();
+noBtn.style.display = "none";
 
-  /* Confetti */
-  for(let i=0;i<70;i++){
-    let conf = document.createElement("div");
-    conf.innerHTML = "💖";
-    conf.style.position = "fixed";
-    conf.style.left = Math.random()*100 + "vw";
-    conf.style.top = Math.random()*100 + "vh";
-    conf.style.fontSize = "25px";
-    conf.style.animation = "float 3s linear";
-    document.body.appendChild(conf);
-    setTimeout(()=>conf.remove(),3000);
-  }
-
-  container.innerHTML = "<h2 id='typing'></h2>";
-
-  let text = "You just made Nakul the happiest person alive ❤️🥺";
-  let i = 0;
-
-  let typing = setInterval(()=>{
-
-    document.getElementById("typing").innerHTML += text[i];
-    i++;
-
-    if(i === text.length){
-      clearInterval(typing);
-      setTimeout(showPopup,1200);
-    }
-
-  },40);
-};
-
-
-function showPopup(){
-
-  let popup = document.createElement("div");
-  popup.className = "popup";
-
-  popup.innerHTML = `
-  <h2>My Love ❤️</h2>
-  <p>
-  From the moment you came into my life,
-  everything became more beautiful.
-  I promise to love you forever ♾️
-  </p>
-  <h3>Nakul ❤️ Shrutika</h3>
-  `;
-
-  document.body.appendChild(popup);
-
-  photos.forEach(photo=>{
-    let img = document.createElement("img");
-    img.src = photo;
-    container.appendChild(img);
-  });
-
+/* Heart burst */
+for(let i=0;i<60;i++){
+let conf = document.createElement("div");
+conf.innerHTML = "💖";
+conf.style.position = "fixed";
+conf.style.left = Math.random()*100 + "vw";
+conf.style.top = Math.random()*100 + "vh";
+conf.style.fontSize = "22px";
+conf.style.animation = "float 3s linear";
+document.body.appendChild(conf);
+setTimeout(()=>conf.remove(),3000);
 }
+
+/* Show all photos gallery */
+container.innerHTML = "";
+
+photos.forEach(photo=>{
+let img = document.createElement("img");
+img.src = photo;
+container.appendChild(img);
+});
+
+/* Modern Love Card */
+let card = document.createElement("div");
+card.className = "loveCard";
+
+card.innerHTML = `
+<h2>You made Nakul happiest ❤️</h2>
+<p>
+Since you came into my life, everything feels magical.
+I promise to love you, support you and annoy you forever 😌
+</p>
+<h3>Nakul ❤️ Shrutika ♾️</h3>
+`;
+
+document.body.appendChild(card);
+
+};
 
 </script>
 
