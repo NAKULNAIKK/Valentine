@@ -10,7 +10,7 @@ body{
 margin:0;
 background:black;
 color:white;
-font-family:Arial;
+font-family:Arial, sans-serif;
 text-align:center;
 overflow:hidden;
 }
@@ -19,8 +19,29 @@ overflow:hidden;
 
 img{
 max-width:90%;
+height:auto;
 border-radius:15px;
 margin-top:20px;
+}
+
+/* Netflix Intro */
+#intro{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+background:black;
+font-size:60px;
+font-weight:bold;
+color:red;
+letter-spacing:5px;
+animation:fadeOut 4s forwards;
+}
+
+@keyframes fadeOut{
+0%{opacity:1;}
+80%{opacity:1;}
+100%{opacity:0;visibility:hidden;}
 }
 
 button{
@@ -47,18 +68,6 @@ border-radius:12px;
 font-weight:bold;
 z-index:999;
 }
-
-/* INTRO STYLE */
-#intro{
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-font-size:65px;
-font-weight:bold;
-color:red;
-letter-spacing:6px;
-}
 </style>
 </head>
 
@@ -68,7 +77,7 @@ letter-spacing:6px;
 <div id="intro">MATIMAND</div>
 <audio id="tudum" src="tudum.mp3.mp3"></audio>
 
-<!-- START PHOTO -->
+<!-- FIRST PHOTO -->
 <div id="startSection" class="hidden">
 <img src="photo1.jpg">
 <p>You are my favourite notification ❤️</p>
@@ -81,7 +90,7 @@ letter-spacing:6px;
 <div id="options"></div>
 </div>
 
-<!-- PROPOSAL -->
+<!-- FINAL PROPOSAL -->
 <div id="proposalSection" class="hidden">
 <h1>Will you be my Valentine? ❤️</h1>
 <button class="yes" onclick="startSlideshow()">YES</button>
@@ -93,61 +102,54 @@ letter-spacing:6px;
 <img id="slideImg">
 </div>
 
-<audio id="song" src="Dil-tu-Jaan-tu.mp3" loop></audio>
+<audio id="song" src="Dil-tu-Jaan-tu.mp3.mp3" loop></audio>
 
 <script>
-
-const intro = document.getElementById("intro");
-const startSection = document.getElementById("startSection");
-const tudum = document.getElementById("tudum");
-
-/* INTRO FLOW */
-window.onload = () => {
-
-tudum.play().catch(()=>{});
+const tudum=document.getElementById("tudum");
+const song=document.getElementById("song");
 
 setTimeout(()=>{
-intro.style.display="none";
-startSection.classList.remove("hidden");
-},3000);
-
-};
+tudum.play();
+setTimeout(()=>{
+document.getElementById("startSection").classList.remove("hidden");
+},3500);
+},500);
 
 /* QUIZ DATA */
+
 const quiz=[
 {
 q:"Who loves more in this relationship?",
-options:["Me obviously","You obviously","Equal love","Your food love","Your sleep love"],
+options:["Me obviously","You obviously","Equal love","Our WiFi connection","Your food love","Your sleep love"],
 answer:"Me obviously",
-rightMsg:"Correct 😎 Truth accepted",
-wrongMsg:"Wrong 😂 I love more"
+rightMsg:"Correct 😎 You finally accepted truth",
+wrongMsg:"Wrong 😂 You forgot who cries first"
 },
 {
 q:"Why do you tolerate me?",
-options:["Life is boring without me","I am cute","Because destiny forced","For my snacks","I am amazing"],
+options:["Life is boring without me","I am cute","You are stuck now","Because I am amazing","For my snacks","Because destiny forced"],
 answer:"Life is boring without me",
-rightMsg:"Correct ❤️ Life needs spice",
-wrongMsg:"Wrong 😏 Boring life alert"
+rightMsg:"Correct ❤️ You know your life needs spice",
+wrongMsg:"Wrong 😏 Try again, boring life alert"
 },
 {
 q:"Will you stay stuck with me forever?",
-options:["Obviously yes","Maybe","Depends on mood","Only if food included","Already stuck"],
+options:["Obviously yes","Maybe","Only if food included","Depends on mood","Let me think","I am already stuck"],
 answer:"Obviously yes",
-rightMsg:"Correct 😍 Escape cancelled",
-wrongMsg:"Wrong 😂 You still stuck"
+rightMsg:"Correct 😍 Too late to escape",
+wrongMsg:"Wrong 😂 I will still not leave you"
 }
 ];
 
 let index=0;
 
 function startQuiz(){
-startSection.classList.add("hidden");
+document.getElementById("startSection").classList.add("hidden");
 document.getElementById("quizSection").classList.remove("hidden");
 loadQuestion();
 }
 
 function loadQuestion(){
-
 if(index>=quiz.length){
 document.getElementById("quizSection").classList.add("hidden");
 document.getElementById("proposalSection").classList.remove("hidden");
@@ -157,16 +159,15 @@ return;
 let q=quiz[index];
 document.getElementById("question").innerText=q.q;
 
-let html="";
+let optHTML="";
 q.options.forEach(o=>{
-html+=`<button onclick="checkAnswer('${o}')">${o}</button><br>`;
+optHTML+=`<button onclick="checkAnswer('${o}')">${o}</button><br>`;
 });
 
-document.getElementById("options").innerHTML=html;
+document.getElementById("options").innerHTML=optHTML;
 }
 
 function checkAnswer(selected){
-
 let q=quiz[index];
 
 let popup=document.createElement("div");
@@ -184,46 +185,45 @@ loadQuestion();
 }
 
 /* NO BUTTON ESCAPE */
+
 const noBtn=document.getElementById("noBtn");
 
 noBtn.addEventListener("mouseenter",()=>{
-let x=Math.random()*200-100;
-let y=Math.random()*200-100;
+const x=Math.random()*200-100;
+const y=Math.random()*200-100;
 noBtn.style.transform=`translate(${x}px,${y}px)`;
 });
 
 /* SLIDESHOW */
+
 const photos=[
-"photo1.jpg",
-"photo2.jpg",
-"photo3.jpg",
-"photo4.jpg",
-"photo5.jpg"
+"photo1.jpg.jpeg",
+"photo2.jpg.jpeg",
+"photo3.jpg.jpeg",
+"photo4.jpg.jpeg",
+"photo5.jpg.jpeg"
 ];
 
 const quotes=[
-"You are my today and tomorrow ❤️",
+"You are my today and all of my tomorrows ❤️",
 "My favourite place is beside you 💕",
-"Every moment with you is magic 😘",
+"Every moment with you = best memory 😘",
 "You + Me = Forever ♾️",
 "I choose you everyday ❤️"
 ];
 
 let slideIndex=0;
-const song=document.getElementById("song");
 
 function startSlideshow(){
-
 document.getElementById("proposalSection").classList.add("hidden");
 document.getElementById("slideshow").classList.remove("hidden");
 
-song.play().catch(()=>{});
+song.play();
 
 showSlide();
 }
 
 function showSlide(){
-
 if(slideIndex>=photos.length){
 slideIndex=0;
 }
@@ -241,7 +241,6 @@ slideIndex++;
 
 setTimeout(showSlide,4000);
 }
-
 </script>
 
 </body>
