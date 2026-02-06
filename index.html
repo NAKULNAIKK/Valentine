@@ -7,11 +7,11 @@
 
 <style>
 
-/* GENERAL */
+/* ---------- GENERAL ---------- */
 
 body{
 margin:0;
-font-family:Arial, sans-serif;
+font-family:'Segoe UI',sans-serif;
 background:black;
 color:white;
 overflow:hidden;
@@ -22,55 +22,71 @@ height:100vh;
 text-align:center;
 }
 
-.hidden{
-display:none;
-}
-
-/* NETFLIX INTRO */
-
-#intro{
-font-size:60px;
-font-weight:bold;
-letter-spacing:6px;
-color:red;
-animation: netflix 3s forwards;
-}
-
-@keyframes netflix{
-0%{opacity:0; transform:scale(0.3);}
-50%{opacity:1; transform:scale(1.2);}
-100%{opacity:0; transform:scale(1);}
-}
-
-/* MAIN CONTAINER */
+.hidden{ display:none; }
 
 .section{
 position:absolute;
 width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+transition:opacity 0.7s ease;
 }
 
-/* QUIZ */
+/* ---------- NETFLIX INTRO ---------- */
 
-.quiz button{
-margin:10px;
+#intro{
+font-size:60px;
+font-weight:bold;
+color:#e50914;
+letter-spacing:6px;
+animation: netflixIntro 3s forwards;
+}
+
+@keyframes netflixIntro{
+0%{opacity:0; transform:scale(0.4);}
+50%{opacity:1; transform:scale(1.1); text-shadow:0 0 40px red;}
+100%{opacity:0; transform:scale(1);}
+}
+
+/* ---------- QUIZ ---------- */
+
+.quizCard{
+background:rgba(255,255,255,0.08);
+padding:30px;
+border-radius:20px;
+backdrop-filter:blur(10px);
+animation: slideUp 0.7s ease;
+max-width:350px;
+}
+
+.quizCard button{
+margin:8px;
 padding:12px 25px;
 border:none;
 border-radius:10px;
-font-size:18px;
-cursor:pointer;
 background:#ff4d6d;
 color:white;
+font-size:17px;
+cursor:pointer;
+transition:0.3s;
 }
 
-/* PROPOSAL */
+.quizCard button:hover{
+transform:scale(1.1);
+}
+
+@keyframes slideUp{
+from{transform:translateY(60px); opacity:0;}
+to{transform:translateY(0); opacity:1;}
+}
+
+/* ---------- PROPOSAL ---------- */
 
 #proposal{
 background:linear-gradient(to right,#ff9a9e,#fad0c4);
-height:100vh;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
 color:black;
 }
 
@@ -81,6 +97,7 @@ border:none;
 border-radius:12px;
 cursor:pointer;
 margin:10px;
+transition:0.3s;
 }
 
 #yesBtn{
@@ -94,21 +111,28 @@ color:white;
 position:absolute;
 }
 
-/* PHOTO */
+/* ---------- PHOTO GALLERY ---------- */
 
-#photoContainer img{
-width:200px;
-border-radius:15px;
-margin:10px;
-animation: zoom 1s;
+#photoContainer{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+margin-top:20px;
 }
 
-@keyframes zoom{
-from{transform:scale(0.6); opacity:0;}
+#photoContainer img{
+width:180px;
+border-radius:15px;
+margin:10px;
+animation: photoPop 0.8s ease;
+}
+
+@keyframes photoPop{
+from{transform:scale(0.5); opacity:0;}
 to{transform:scale(1); opacity:1;}
 }
 
-/* HEART FLOAT */
+/* ---------- FLOAT PARTICLES ---------- */
 
 @keyframes float{
 from{transform:translateY(0); opacity:1;}
@@ -120,33 +144,24 @@ to{transform:translateY(-100vh); opacity:0;}
 
 <body>
 
-<!-- NETFLIX INTRO -->
+<!-- INTRO -->
 <div id="intro">NAKUL ❤️ SHRUTIKA</div>
 
 <!-- QUIZ -->
-<div id="quiz" class="section hidden quiz">
-
-<h2>Before moving ahead answer honestly ❤️</h2>
-
-<p>Do you like Nakul?</p>
-<button onclick="nextQ()">Yes 😊</button>
-<button onclick="nextQ()">Maybe 😌</button>
-
+<div id="quizSection" class="section hidden">
+<div class="quizCard">
+<h2 id="quizQuestion"></h2>
+<div id="quizOptions"></div>
 </div>
-
+</div>
 
 <!-- PROPOSAL -->
 <div id="proposal" class="section hidden">
-
 <h1>Will you be my Valentine? ❤️</h1>
-
 <button id="yesBtn">Yes</button>
 <button id="noBtn">No</button>
-
 <div id="photoContainer"></div>
-
 </div>
-
 
 <audio id="song" loop>
 <source src="Dil-tu-Jaan-tu.mp3.mp3">
@@ -154,33 +169,76 @@ to{transform:translateY(-100vh); opacity:0;}
 
 <script>
 
-/* INTRO TRANSITION */
+/* ---------- INTRO ---------- */
 
 setTimeout(()=>{
-document.getElementById("intro").classList.add("hidden");
-document.getElementById("quiz").classList.remove("hidden");
+intro.style.display="none";
+quizSection.classList.remove("hidden");
+loadQuiz();
 },3000);
 
 
-/* QUIZ → PROPOSAL */
+/* ---------- QUIZ DATA ---------- */
 
-function nextQ(){
-document.getElementById("quiz").classList.add("hidden");
-document.getElementById("proposal").classList.remove("hidden");
+const questions = [
+{
+q:"How special is Nakul to you?",
+a:["Very Special ❤️","He is nice 😊"]
+},
+{
+q:"Do you enjoy talking with Nakul?",
+a:["Always 😍","Sometimes 🙂"]
+},
+{
+q:"Do you smile when you see Nakul message?",
+a:["Yes obviously ❤️","Maybe 😌"]
+}
+];
+
+let qIndex = 0;
+
+function loadQuiz(){
+
+let q = questions[qIndex];
+
+quizQuestion.innerText = q.q;
+quizOptions.innerHTML="";
+
+q.a.forEach(ans=>{
+let btn = document.createElement("button");
+btn.innerText = ans;
+btn.onclick = nextQuestion;
+quizOptions.appendChild(btn);
+});
+
+}
+
+function nextQuestion(){
+
+qIndex++;
+
+if(qIndex < questions.length){
+loadQuiz();
+}
+else{
+quizSection.classList.add("hidden");
+proposal.classList.remove("hidden");
+}
+
 }
 
 
-/* PROPOSAL LOGIC */
+/* ---------- PROPOSAL ---------- */
 
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 const container = document.getElementById("photoContainer");
 const song = document.getElementById("song");
 
-let yesSize = 1;
-let noSize = 1;
+let yesSize=1;
+let noSize=1;
 
-const photos = [
+const photos=[
 "photo1.jpg.jpeg",
 "photo2.jpg.jpeg",
 "photo3.jpg.jpeg",
@@ -190,70 +248,68 @@ const photos = [
 
 function moveNo(){
 
-let x = Math.random()*window.innerWidth;
-let y = Math.random()*window.innerHeight;
+let x=Math.random()*window.innerWidth;
+let y=Math.random()*window.innerHeight;
 
-noBtn.style.left = x+"px";
-noBtn.style.top = y+"px";
+noBtn.style.left=x+"px";
+noBtn.style.top=y+"px";
 }
 
 noBtn.addEventListener("mouseover",moveNo);
 noBtn.addEventListener("touchstart",moveNo);
 
-noBtn.onclick = ()=>{
+noBtn.onclick=()=>{
 
 song.play().catch(()=>{});
 
-yesSize += 0.2;
-yesBtn.style.transform = `scale(${yesSize})`;
+yesSize+=0.2;
+yesBtn.style.transform=`scale(${yesSize})`;
 
-noSize -= 0.1;
-noBtn.style.transform = `scale(${noSize})`;
+noSize-=0.1;
+noBtn.style.transform=`scale(${noSize})`;
 
 moveNo();
 
 };
 
 
-/* YES CLICK */
+/* ---------- YES CLICK ---------- */
 
-yesBtn.onclick = ()=>{
+yesBtn.onclick=()=>{
 
 song.play().catch(()=>{});
 noBtn.style.display="none";
 
-/* Hearts explosion */
+/* heart burst */
 
-for(let i=0;i<80;i++){
-let heart=document.createElement("div");
-heart.innerHTML="💖";
-heart.style.position="fixed";
-heart.style.left=Math.random()*100+"vw";
-heart.style.top=Math.random()*100+"vh";
-heart.style.fontSize="25px";
-heart.style.animation="float 3s linear";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),3000);
+for(let i=0;i<70;i++){
+let h=document.createElement("div");
+h.innerHTML="💖";
+h.style.position="fixed";
+h.style.left=Math.random()*100+"vw";
+h.style.top=Math.random()*100+"vh";
+h.style.fontSize="24px";
+h.style.animation="float 3s linear";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),3000);
 }
 
-/* Show photos */
+/* staggered photo reveal */
 
 container.innerHTML="";
 
-photos.forEach(p=>{
+photos.forEach((p,i)=>{
+setTimeout(()=>{
 let img=document.createElement("img");
 img.src=p;
 container.appendChild(img);
+},i*400);
 });
-
-let msg=document.createElement("h2");
-msg.innerHTML="You made Nakul happiest ❤️";
-container.appendChild(msg);
 
 };
 
 
-/* Floating sparkles */
+/* ---------- BACKGROUND SPARKLES ---------- */
 
 setInterval(()=>{
 
