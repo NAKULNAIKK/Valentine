@@ -56,7 +56,7 @@ button{
 
 <!-- 📸 Photo Slider -->
 <div class="slider">
-    <img id="slideImg" src="photo1.jpg">
+    <img id="slideImg" src="photo1.jpg.jpeg">
 </div>
 
 <h2>Will you be my Valentine? 💘</h2>
@@ -73,13 +73,13 @@ button{
 
 <script>
 
-// 📸 Photo slider (5 photos)
+// 📸 Photo slider
 let images=[
-"photo1.jpg",
-"photo2.jpg",
-"photo3.jpg",
-"photo4.jpg",
-"photo5.jpg"
+"photo1.jpg.jpeg",
+"photo2.jpg.jpeg",
+"photo3.jpg.jpeg",
+"photo4.jpg.jpeg",
+"photo5.jpg.jpeg"
 ];
 
 let index=0;
@@ -90,7 +90,7 @@ setInterval(()=>{
 },2500);
 
 
-// 🎵 Song play on first tap
+// 🎵 Song on first tap
 document.body.addEventListener("click",()=>{
     document.getElementById("song").play().catch(()=>{});
 },{once:true});
@@ -120,6 +120,7 @@ function noClicked(){
     btn.style.left=randomX+"px";
     btn.style.top=randomY+"px";
 }
+
 
 function createHearts(){
     setInterval(()=>{
