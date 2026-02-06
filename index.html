@@ -9,16 +9,7 @@ body{
     text-align:center;
     font-family:Arial;
     background:#ffe6f0;
-    overflow:hidden;
-}
-
-.slider img{
-    width:90%;
-    max-width:320px;
-    height:220px;
-    object-fit:cover;
-    border-radius:15px;
-    margin-top:20px;
+    overflow-x:hidden;
 }
 
 button{
@@ -46,6 +37,22 @@ button{
     margin-top:20px;
     color:red;
 }
+
+#funnyMsg{
+    display:none;
+    font-size:20px;
+    margin-top:10px;
+    color:#ff2e63;
+    font-weight:bold;
+}
+
+.photo{
+    display:none;
+    width:90%;
+    max-width:300px;
+    margin:10px auto;
+    border-radius:15px;
+}
 </style>
 </head>
 
@@ -54,17 +61,22 @@ button{
 <h2>Shrutika ❤️</h2>
 <p>Nakul has one question 😌</p>
 
-<!-- 📸 Photo Slider -->
-<div class="slider">
-    <img id="slideImg" src="photo1.jpg.jpeg">
-</div>
-
 <h2>Will you be my Valentine? 💘</h2>
 
 <button id="yesBtn" onclick="yesClicked()">Yes</button>
 <button id="noBtn" onclick="noClicked()">No</button>
 
 <div id="loveText">OMG She Said YES ❤️</div>
+
+<!-- 😂 Funny Message -->
+<div id="funnyMsg">Are you sure? Think again 😏</div>
+
+<!-- 📸 Photos -->
+<img class="photo" id="p1" src="photo1.jpg.jpeg">
+<img class="photo" id="p2" src="photo2.jpg.jpeg">
+<img class="photo" id="p3" src="photo3.jpg.jpeg">
+<img class="photo" id="p4" src="photo4.jpg.jpeg">
+<img class="photo" id="p5" src="photo5.jpg.jpeg">
 
 <!-- 🎵 Song -->
 <audio id="song" loop>
@@ -73,43 +85,41 @@ button{
 
 <script>
 
-// 📸 Photo slider
-let images=[
-"photo1.jpg.jpeg",
-"photo2.jpg.jpeg",
-"photo3.jpg.jpeg",
-"photo4.jpg.jpeg",
-"photo5.jpg.jpeg"
-];
-
-let index=0;
-
-setInterval(()=>{
-    index=(index+1)%images.length;
-    document.getElementById("slideImg").src=images[index];
-},2500);
-
-
-// 🎵 Song on first tap
-document.body.addEventListener("click",()=>{
-    document.getElementById("song").play().catch(()=>{});
-},{once:true});
-
-
-function yesClicked(){
-    document.getElementById("loveText").style.display="block";
-    createHearts();
-}
+let noClickCount = 0;
 
 function noClicked(){
+
     let btn=document.getElementById("noBtn");
 
     btn.innerText="😂";
+    setTimeout(()=>{ btn.innerText="No"; },1000);
 
-    setTimeout(()=>{
-        btn.innerText="No";
-    },1000);
+    noClickCount++;
 
+    if(noClickCount === 1){
+        document.getElementById("p1").style.display="block";
+    }
+
+    if(noClickCount === 2){
+        document.getElementById("p2").style.display="block";
+
+        // 😂 Show funny message
+        document.getElementById("funnyMsg").style.display="block";
+    }
+
+    if(noClickCount === 3){
+        document.getElementById("p3").style.display="block";
+    }
+
+    if(noClickCount === 4){
+        document.getElementById("p4").style.display="block";
+    }
+
+    if(noClickCount === 5){
+        document.getElementById("p5").style.display="block";
+    }
+
+    // Move No button near Yes
     let yesBtn=document.getElementById("yesBtn");
     let rect=yesBtn.getBoundingClientRect();
 
@@ -122,6 +132,27 @@ function noClicked(){
 }
 
 
+function yesClicked(){
+
+    document.getElementById("loveText").style.display="block";
+
+    // 🎵 Play Song
+    document.getElementById("song").play().catch(()=>{});
+
+    // 💖 Hearts
+    createHearts();
+
+    // 📸 Show all photos
+    document.querySelectorAll(".photo").forEach(img=>{
+        img.style.display="block";
+    });
+
+    // Hide funny message if visible
+    document.getElementById("funnyMsg").style.display="none";
+}
+
+
+// 💖 Heart Animation
 function createHearts(){
     setInterval(()=>{
         let heart=document.createElement("div");
