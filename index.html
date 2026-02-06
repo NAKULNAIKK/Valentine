@@ -8,52 +8,100 @@
 <style>
 
 body{
-  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
   font-family:Arial;
   background:linear-gradient(to right,#ff9a9e,#fad0c4);
   margin:0;
-  padding:20px;
   overflow:hidden;
 }
 
 h1{
-  margin-top:40px;
+  margin-bottom:20px;
+  text-align:center;
+}
+
+.buttonContainer{
+  position:relative;
+  height:100px;
+  width:300px;
 }
 
 button{
-  padding:12px 25px;
-  font-size:18px;
-  margin:10px;
+  padding:14px 30px;
+  font-size:20px;
   border:none;
   border-radius:12px;
   cursor:pointer;
+  transition:0.3s;
+  position:absolute;
 }
 
 #yesBtn{
   background:#4CAF50;
   color:white;
+  left:30%;
 }
 
 #noBtn{
   background:#f44336;
   color:white;
-  position:fixed;
+  left:60%;
 }
 
 img{
-  width:80%;
-  max-width:260px;
+  width:220px;
   border-radius:15px;
-  margin:10px;
+  margin-top:15px;
+  animation: fadeIn 1s;
 }
 
 #photoContainer{
-  margin-top:20px;
+  text-align:center;
+  margin-top:15px;
+}
+
+.popup{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.3);
+  z-index:999;
 }
 
 @keyframes float{
   from {transform: translateY(0); opacity:1;}
   to {transform: translateY(-100vh); opacity:0;}
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+/* Mobile fix */
+@media(max-width:600px){
+
+  .buttonContainer{
+    width:220px;
+  }
+
+  button{
+    font-size:16px;
+    padding:10px 18px;
+  }
+
+  img{
+    width:180px;
+  }
+
 }
 
 </style>
@@ -63,8 +111,10 @@ img{
 
 <h1>Will you be my Valentine? ❤️</h1>
 
-<button id="yesBtn">Yes</button>
-<button id="noBtn">No</button>
+<div class="buttonContainer">
+  <button id="yesBtn">Yes</button>
+  <button id="noBtn">No</button>
+</div>
 
 <div id="photoContainer"></div>
 
@@ -75,6 +125,8 @@ img{
 <script>
 
 let noCount = 0;
+let yesSize = 1;
+let noSize = 1;
 let songStarted = false;
 
 const noBtn = document.getElementById("noBtn");
@@ -90,10 +142,6 @@ const photos = [
 "photo5.jpg.jpeg"
 ];
 
-// Start position
-noBtn.style.top = "65%";
-noBtn.style.left = "55%";
-
 function startSong(){
   if(!songStarted){
     song.play().catch(()=>{});
@@ -103,56 +151,51 @@ function startSong(){
 
 function moveNoButton(){
 
-  let yesRect = yesBtn.getBoundingClientRect();
+  let containerRect = document.querySelector(".buttonContainer").getBoundingClientRect();
 
-  let offsetX = (Math.random()*160)-80;
-  let offsetY = (Math.random()*160)-80;
+  let x = Math.random() * (containerRect.width - 80);
+  let y = Math.random() * (containerRect.height - 40);
 
-  let newX = yesRect.left + offsetX;
-  let newY = yesRect.top + offsetY;
-
-  newX = Math.max(0, Math.min(window.innerWidth - noBtn.offsetWidth, newX));
-  newY = Math.max(0, Math.min(window.innerHeight - noBtn.offsetHeight, newY));
-
-  noBtn.style.left = newX + "px";
-  noBtn.style.top = newY + "px";
-}
-
-function createHearts(){
-
-  setInterval(()=>{
-
-    let heart = document.createElement("div");
-
-    heart.innerHTML = "❤️";
-    heart.style.position = "fixed";
-    heart.style.left = Math.random()*100 + "vw";
-    heart.style.bottom = "0";
-    heart.style.fontSize = "20px";
-    heart.style.animation = "float 4s linear";
-
-    document.body.appendChild(heart);
-
-    setTimeout(()=>heart.remove(),4000);
-
-  },300);
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
 }
 
 
-// NO CLICK
+/* Floating Hearts Background */
+setInterval(()=>{
+
+  let heart = document.createElement("div");
+  heart.innerHTML = "❤️";
+  heart.style.position = "fixed";
+  heart.style.left = Math.random()*100 + "vw";
+  heart.style.bottom = "0";
+  heart.style.fontSize = "22px";
+  heart.style.animation = "float 4s linear";
+
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),4000);
+
+},400);
+
+
+/* NO button behaviour */
+noBtn.addEventListener("mouseover", moveNoButton);
+noBtn.addEventListener("touchstart", moveNoButton);
+
 noBtn.onclick = () => {
 
   startSong();
-
   noCount++;
 
-  noBtn.innerText = "😂";
+  yesSize += 0.2;
+  yesBtn.style.transform = `scale(${yesSize})`;
 
-  setTimeout(()=> noBtn.innerText="No",1000);
+  noSize -= 0.1;
+  noBtn.style.transform = `scale(${noSize})`;
 
   moveNoButton();
 
-  if(noCount <= 5){
+  if(noCount <= photos.length){
     container.innerHTML = "";
     let img = document.createElement("img");
     img.src = photos[noCount-1];
@@ -161,14 +204,24 @@ noBtn.onclick = () => {
 };
 
 
-// YES CLICK
+/* YES click */
 yesBtn.onclick = () => {
 
   startSong();
-
   noBtn.style.display = "none";
 
-  createHearts();
+  /* Confetti */
+  for(let i=0;i<70;i++){
+    let conf = document.createElement("div");
+    conf.innerHTML = "💖";
+    conf.style.position = "fixed";
+    conf.style.left = Math.random()*100 + "vw";
+    conf.style.top = Math.random()*100 + "vh";
+    conf.style.fontSize = "25px";
+    conf.style.animation = "float 3s linear";
+    document.body.appendChild(conf);
+    setTimeout(()=>conf.remove(),3000);
+  }
 
   container.innerHTML = "<h2 id='typing'></h2>";
 
@@ -182,24 +235,37 @@ yesBtn.onclick = () => {
 
     if(i === text.length){
       clearInterval(typing);
-
-      setTimeout(()=>{
-
-        photos.forEach(photo=>{
-          let img = document.createElement("img");
-          img.src = photo;
-          container.appendChild(img);
-        });
-
-        let finalMsg = document.createElement("h3");
-        finalMsg.innerHTML = "Nakul ❤️ Shrutika Forever ♾️";
-        container.appendChild(finalMsg);
-
-      },1000);
+      setTimeout(showPopup,1200);
     }
 
   },40);
 };
+
+
+function showPopup(){
+
+  let popup = document.createElement("div");
+  popup.className = "popup";
+
+  popup.innerHTML = `
+  <h2>My Love ❤️</h2>
+  <p>
+  From the moment you came into my life,
+  everything became more beautiful.
+  I promise to love you forever ♾️
+  </p>
+  <h3>Nakul ❤️ Shrutika</h3>
+  `;
+
+  document.body.appendChild(popup);
+
+  photos.forEach(photo=>{
+    let img = document.createElement("img");
+    img.src = photo;
+    container.appendChild(img);
+  });
+
+}
 
 </script>
 
