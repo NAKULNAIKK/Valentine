@@ -71,7 +71,8 @@ button {
 
 #noBtn {
     background: #ddd;
-    right: 10%;
+    left: 60%;
+    top: 50px;
 }
 
 .love {
@@ -117,8 +118,8 @@ button {
     </div>
 </div>
 
-<!-- Audio song -->
-<audio id="song" src="cute-love-song.mp3"></audio>
+<!-- Audio of Dil Tu Jaan Tu -->
+<audio id="song" src="DilTuJaanTu.mp3"></audio>
 
 <script>
 // Simple image slider
@@ -129,10 +130,10 @@ setInterval(() => {
     document.getElementById("slideImg").src = images[index];
 }, 3000);
 
-// Smooth sliding No button + laughing emoji
+// Smooth No button move around itself + laughing emoji
 const noBtn = document.getElementById("noBtn");
 
-function moveNoSmooth(event) {
+function moveNo(event) {
     const rect = noBtn.getBoundingClientRect();
     const mouseX = event.clientX || event.touches[0].clientX;
     const mouseY = event.clientY || event.touches[0].clientY;
@@ -141,19 +142,15 @@ function moveNoSmooth(event) {
     const distY = mouseY - (rect.top + rect.height / 2);
     const distance = Math.sqrt(distX*distX + distY*distY);
 
-    if(distance < 100){ // move when cursor is close
-        const maxX = window.innerWidth - rect.width;
-        const maxY = window.innerHeight - rect.height;
+    if(distance < 80){ // start moving when close
+        // Slight random offset (max ±20px)
+        const offsetX = (Math.random() - 0.5) * 40;
+        const offsetY = (Math.random() - 0.5) * 40;
 
-        // New target position slightly away from mouse
-        let newX = Math.min(Math.max(rect.left + (distX/Math.abs(distX))*50 || 50, 0), maxX);
-        let newY = Math.min(Math.max(rect.top + (distY/Math.abs(distY))*50 || 50, 0), maxY);
+        noBtn.style.left = rect.left + offsetX + "px";
+        noBtn.style.top = rect.top + offsetY + "px";
 
-        noBtn.style.left = newX + "px";
-        noBtn.style.top = newY + "px";
-
-        // Turn into laughing emoji for 1 second
-        const originalText = noBtn.innerText;
+        // Laughing emoji for 1 second
         noBtn.innerText = "😂";
         noBtn.style.background = `hsl(${Math.random()*360}, 70%, 80%)`;
 
@@ -164,14 +161,15 @@ function moveNoSmooth(event) {
     }
 }
 
-// Listen for touch and mouse
-document.addEventListener("mousemove", moveNoSmooth);
-document.addEventListener("touchmove", moveNoSmooth);
+// Listeners for mouse & touch
+document.addEventListener("mousemove", moveNo);
+document.addEventListener("touchmove", moveNo);
 
 // Yes button click
 function yesClicked() {
     document.getElementById("loveText").style.display = "block";
 
+    // Play only audio
     const song = document.getElementById("song");
     song.play();
 
