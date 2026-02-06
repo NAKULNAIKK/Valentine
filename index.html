@@ -7,57 +7,81 @@
 
 <style>
 body{
-margin:0;
-background:black;
-color:white;
-font-family:Arial;
-text-align:center;
-overflow:hidden;
+  margin:0;
+  background:black;
+  color:white;
+  font-family:Arial, sans-serif;
+  text-align:center;
+  overflow:hidden;
 }
 
 .hidden{display:none;}
 
-img{
-max-width:90%;
-border-radius:15px;
-margin-top:20px;
+/* Make all slideshow photos responsive */
+#slideshow img{
+  max-width:90%;
+  height:auto;
+  border-radius:15px;
+  margin-top:20px;
+}
+
+/* Style for first photo */
+#startSection img {
+  max-width:300px;  /* smaller width for first photo */
+  width:80%;        /* responsive for mobile */
+  height:auto;
+  border-radius:15px;
+  margin-top:20px;
+  animation: fadeIn 1s ease forwards;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {opacity:0; transform:scale(0.8);}
+  to {opacity:1; transform:scale(1);}
 }
 
 button{
-padding:12px 25px;
-font-size:18px;
-margin:10px;
-border:none;
-border-radius:10px;
-cursor:pointer;
+  padding:12px 25px;
+  font-size:18px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 
 .yes{background:#ff4081;color:white;}
 .no{background:gray;color:white;position:relative;}
 
 .popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:white;
-color:black;
-padding:20px;
-border-radius:12px;
-font-weight:bold;
-z-index:999;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  color:black;
+  padding:20px;
+  border-radius:12px;
+  font-weight:bold;
+  z-index:999;
 }
 
 /* INTRO STYLE */
 #intro{
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-font-size:65px;
-font-weight:bold;
-color:red;
-letter-spacing:6px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-size:65px;
+  font-weight:bold;
+  color:red;
+  letter-spacing:6px;
+}
+
+#startSection p {
+  font-size:18px;
+  color:white;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -70,179 +94,166 @@ letter-spacing:6px;
 
 <!-- START PHOTO -->
 <div id="startSection" class="hidden">
-<img src="photo1.jpg.jpeg">
-<p>You are my favourite notification ❤️</p>
-<button onclick="startQuiz()">Continue</button>
+  <img src="photo1.jpg.jpeg">
+  <p>You are my favourite notification ❤️</p>
+  <button onclick="startQuiz()">Continue</button>
 </div>
 
 <!-- QUIZ -->
 <div id="quizSection" class="hidden">
-<h2 id="question"></h2>
-<div id="options"></div>
+  <h2 id="question"></h2>
+  <div id="options"></div>
 </div>
 
 <!-- PROPOSAL -->
 <div id="proposalSection" class="hidden">
-<h1>Will you be my Valentine? ❤️</h1>
-<button class="yes" onclick="startSlideshow()">YES</button>
-<button class="no" id="noBtn">NO</button>
+  <h1>Will you be my Valentine? ❤️</h1>
+  <button class="yes" onclick="startSlideshow()">YES</button>
+  <button class="no" id="noBtn">NO</button>
 </div>
 
 <!-- SLIDESHOW -->
 <div id="slideshow" class="hidden">
-<img id="slideImg">
+  <img id="slideImg">
 </div>
 
 <audio id="song" src="Dil-tu-Jaan-tu.mp3.mp3" loop></audio>
 
 <script>
 
+/* INTRO FLOW */
 const intro = document.getElementById("intro");
 const startSection = document.getElementById("startSection");
 const tudum = document.getElementById("tudum");
 
-/* INTRO FLOW */
 window.onload = () => {
+  tudum.play().catch(()=>{});
 
-tudum.play().catch(()=>{});
-
-setTimeout(()=>{
-intro.style.display="none";
-startSection.classList.remove("hidden");
-},3000);
-
+  setTimeout(()=>{
+    intro.style.display="none";
+    startSection.classList.remove("hidden");
+  },3000);
 };
 
 /* QUIZ DATA */
 const quiz=[
-{
-q:"Who loves more in this relationship?",
-options:["Me obviously","You obviously","Equal love","Your food love","Your sleep love"],
-answer:"Me obviously",
-rightMsg:"Correct 😎 Truth accepted",
-wrongMsg:"Wrong 😂 I love more"
-},
-{
-q:"Why do you tolerate me?",
-options:["Life is boring without me","I am cute","Because destiny forced","For my snacks","I am amazing"],
-answer:"Life is boring without me",
-rightMsg:"Correct ❤️ Life needs spice",
-wrongMsg:"Wrong 😏 Boring life alert"
-},
-{
-q:"Will you stay stuck with me forever?",
-options:["Obviously yes","Maybe","Depends on mood","Only if food included","Already stuck"],
-answer:"Obviously yes",
-rightMsg:"Correct 😍 Escape cancelled",
-wrongMsg:"Wrong 😂 You still stuck"
-}
+  {
+    q:"Who loves more in this relationship?",
+    options:["Me obviously","You obviously","Equal love","Your food love","Your sleep love"],
+    answer:"Me obviously",
+    rightMsg:"Correct 😎 Truth accepted",
+    wrongMsg:"Wrong 😂 I love more"
+  },
+  {
+    q:"Why do you tolerate me?",
+    options:["Life is boring without me","I am cute","Because destiny forced","For my snacks","I am amazing"],
+    answer:"Life is boring without me",
+    rightMsg:"Correct ❤️ Life needs spice",
+    wrongMsg:"Wrong 😏 Boring life alert"
+  },
+  {
+    q:"Will you stay stuck with me forever?",
+    options:["Obviously yes","Maybe","Depends on mood","Only if food included","Already stuck"],
+    answer:"Obviously yes",
+    rightMsg:"Correct 😍 Escape cancelled",
+    wrongMsg:"Wrong 😂 You still stuck"
+  }
 ];
 
 let index=0;
 
 function startQuiz(){
-startSection.classList.add("hidden");
-document.getElementById("quizSection").classList.remove("hidden");
-loadQuestion();
+  startSection.classList.add("hidden");
+  document.getElementById("quizSection").classList.remove("hidden");
+  loadQuestion();
 }
 
 function loadQuestion(){
+  if(index>=quiz.length){
+    document.getElementById("quizSection").classList.add("hidden");
+    document.getElementById("proposalSection").classList.remove("hidden");
+    return;
+  }
 
-if(index>=quiz.length){
-document.getElementById("quizSection").classList.add("hidden");
-document.getElementById("proposalSection").classList.remove("hidden");
-return;
-}
+  let q=quiz[index];
+  document.getElementById("question").innerText=q.q;
 
-let q=quiz[index];
-document.getElementById("question").innerText=q.q;
+  let html="";
+  q.options.forEach(o=>{
+    html+=`<button onclick="checkAnswer('${o}')">${o}</button><br>`;
+  });
 
-let html="";
-q.options.forEach(o=>{
-html+=`<button onclick="checkAnswer('${o}')">${o}</button><br>`;
-});
-
-document.getElementById("options").innerHTML=html;
+  document.getElementById("options").innerHTML=html;
 }
 
 function checkAnswer(selected){
+  let q=quiz[index];
+  let popup=document.createElement("div");
+  popup.className="popup";
+  popup.innerText = selected===q.answer ? q.rightMsg : q.wrongMsg;
+  document.body.appendChild(popup);
 
-let q=quiz[index];
-
-let popup=document.createElement("div");
-popup.className="popup";
-
-popup.innerText = selected===q.answer ? q.rightMsg : q.wrongMsg;
-
-document.body.appendChild(popup);
-
-setTimeout(()=>{
-popup.remove();
-index++;
-loadQuestion();
-},1500);
+  setTimeout(()=>{
+    popup.remove();
+    if(selected===q.answer) index++;
+    loadQuestion();
+  },1500);
 }
 
 /* NO BUTTON ESCAPE */
 const noBtn=document.getElementById("noBtn");
-
 noBtn.addEventListener("mouseenter",()=>{
-let x=Math.random()*200-100;
-let y=Math.random()*200-100;
-noBtn.style.transform=`translate(${x}px,${y}px)`;
+  let x=Math.random()*200-100;
+  let y=Math.random()*200-100;
+  noBtn.style.transform=`translate(${x}px,${y}px)`;
 });
 
 /* SLIDESHOW */
 const photos=[
-"photo1.jpg.jpeg",
-"photo2.jpg.jpeg",
-"photo3.jpg.jpeg",
-"photo4.jpg.jpeg",
-"photo5.jpg.jpeg"
+  "photo1.jpg.jpeg",
+  "photo2.jpg.jpeg",
+  "photo3.jpg.jpeg",
+  "photo4.jpg.jpeg",
+  "photo5.jpg.jpeg"
 ];
 
 const quotes=[
-"You are my today and tomorrow ❤️",
-"My favourite place is beside you 💕",
-"Every moment with you is magic 😘",
-"You + Me = Forever ♾️",
-"I choose you everyday ❤️"
+  "You are my today and tomorrow ❤️",
+  "My favourite place is beside you 💕",
+  "Every moment with you is magic 😘",
+  "You + Me = Forever ♾️",
+  "I choose you everyday ❤️"
 ];
 
 let slideIndex=0;
 const song=document.getElementById("song");
 
 function startSlideshow(){
-
-document.getElementById("proposalSection").classList.add("hidden");
-document.getElementById("slideshow").classList.remove("hidden");
-
-song.play().catch(()=>{});
-
-showSlide();
+  document.getElementById("proposalSection").classList.add("hidden");
+  document.getElementById("slideshow").classList.remove("hidden");
+  song.play().catch(()=>{});
+  showSlide();
 }
 
 function showSlide(){
+  if(slideIndex>=photos.length){
+    slideIndex=0;
+  }
 
-if(slideIndex>=photos.length){
-slideIndex=0;
-}
+  const slideImg = document.getElementById("slideImg");
+  slideImg.src = photos[slideIndex];
 
-document.getElementById("slideImg").src=photos[slideIndex];
+  let popup=document.createElement("div");
+  popup.className="popup";
+  popup.innerText=quotes[slideIndex];
+  document.body.appendChild(popup);
 
-let popup=document.createElement("div");
-popup.className="popup";
-popup.innerText=quotes[slideIndex];
-document.body.appendChild(popup);
+  setTimeout(()=>popup.remove(),2000);
 
-setTimeout(()=>popup.remove(),2000);
-
-slideIndex++;
-
-setTimeout(showSlide,4000);
+  slideIndex++;
+  setTimeout(showSlide,4000);
 }
 
 </script>
-
 </body>
 </html>
