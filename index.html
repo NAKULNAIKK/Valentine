@@ -17,18 +17,20 @@ body{
 
 .hidden{display:none;}
 
-/* Make all slideshow photos responsive */
-#slideshow img{
-  max-width:90%;
-  height:auto;
-  border-radius:15px;
-  margin-top:20px;
-}
-
-/* Style for first photo */
+/* FIRST PHOTO SMALL */
 #startSection img {
   max-width:300px;  /* smaller width for first photo */
   width:80%;        /* responsive for mobile */
+  height:auto;
+  border-radius:15px;
+  margin-top:20px;
+  animation: fadeIn 1s ease forwards;
+}
+
+/* SLIDESHOW SMALL */
+#slideshow img{
+  max-width:300px;  /* same size as first photo */
+  width:80%;
   height:auto;
   border-radius:15px;
   margin-top:20px;
@@ -128,7 +130,6 @@ const tudum = document.getElementById("tudum");
 
 window.onload = () => {
   tudum.play().catch(()=>{});
-
   setTimeout(()=>{
     intro.style.display="none";
     startSection.classList.remove("hidden");
