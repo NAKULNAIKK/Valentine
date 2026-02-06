@@ -2,18 +2,23 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For You ❤️</title>
 
 <style>
+
 body{
   text-align:center;
   font-family:Arial;
   background:linear-gradient(to right,#ff9a9e,#fad0c4);
   overflow:hidden;
+  margin:0;
+  padding:20px;
 }
 
 h1{
-  margin-top:60px;
+  margin-top:40px;
+  font-size:24px;
 }
 
 button{
@@ -21,7 +26,7 @@ button{
   font-size:18px;
   margin:10px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
 }
 
@@ -33,11 +38,12 @@ button{
 #noBtn{
   background:#f44336;
   color:white;
-  position:absolute;
+  position:fixed;
 }
 
 img{
-  width:220px;
+  width:80%;
+  max-width:260px;
   border-radius:15px;
   margin:10px;
 }
@@ -45,6 +51,7 @@ img{
 #photoContainer{
   margin-top:20px;
 }
+
 </style>
 </head>
 
@@ -64,30 +71,41 @@ img{
 <script>
 
 let noCount = 0;
+
 let noBtn = document.getElementById("noBtn");
 let yesBtn = document.getElementById("yesBtn");
 let container = document.getElementById("photoContainer");
 
 const photos = [
-"photo1.jpg","photo2.jpg","photo3.jpg","photo4.jpg","photo5.jpg",
-"photo1.jpeg","photo2.jpeg","photo3.jpeg","photo4.jpeg","photo5.jpeg"
+"photo1.jpg.jpeg",
+"photo2.jpg.jpeg",
+"photo3.jpg.jpeg",
+"photo4.jpg.jpeg",
+"photo5.jpg.jpeg"
 ];
+
+
+// Start No button position
+noBtn.style.top = "65%";
+noBtn.style.left = "55%";
 
 function moveNoButton(){
 
-  let yesRect = yesBtn.getBoundingClientRect();
+  let maxX = window.innerWidth - noBtn.offsetWidth;
+  let maxY = window.innerHeight - noBtn.offsetHeight;
 
-  let offsetX = Math.random()*120 - 60;
-  let offsetY = Math.random()*120 - 60;
+  let newX = Math.random() * maxX;
+  let newY = Math.random() * maxY;
 
-  noBtn.style.left = (yesRect.left + offsetX) + "px";
-  noBtn.style.top = (yesRect.top + offsetY) + "px";
+  noBtn.style.left = newX + "px";
+  noBtn.style.top = newY + "px";
 }
 
 noBtn.onclick = () => {
 
   noCount++;
 
+  // Funny emoji
   noBtn.innerText = "😂";
 
   setTimeout(()=>{
@@ -96,6 +114,7 @@ noBtn.onclick = () => {
 
   moveNoButton();
 
+  // Show photos one by one (max 5)
   if(noCount <= 5){
 
     container.innerHTML = "";
@@ -108,18 +127,20 @@ noBtn.onclick = () => {
 
 };
 
+
 yesBtn.onclick = () => {
 
-  // ❌ Hide NO button
+  // Hide NO button
   noBtn.style.display = "none";
 
   container.innerHTML = "<h2>You are my everything ❤️</h2>";
 
-  for(let i=0;i<5;i++){
+  // Show all photos
+  photos.forEach(photo=>{
     let img = document.createElement("img");
-    img.src = photos[i];
+    img.src = photo;
     container.appendChild(img);
-  }
+  });
 
   document.body.style.background =
   "linear-gradient(to right,#ff758c,#ff7eb3)";
